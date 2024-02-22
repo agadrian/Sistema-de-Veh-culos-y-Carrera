@@ -1,7 +1,48 @@
-fun main(args: Array<String>) {
-    println("Hello World!")
+import kotlin.math.pow
+import kotlin.math.roundToInt
 
-    // Try adding program arguments via Run/Debug configuration.
-    // Learn more about running applications: https://www.jetbrains.com/help/idea/running-applications.html.
-    println("Program arguments: ${args.joinToString()}")
+
+fun Float.redondear(posiciones: Int): Float{
+    val factor = 10.0.pow(posiciones.toDouble()).toFloat()
+    return (this * factor).roundToInt() / factor
+}
+
+fun main() {
+
+    val vehiculo = Vehiculo("Toyota", "Corolla", 150f, 100f, 50f)
+
+    val automovil = Automovil(true, false, "Tesla", "s", 150f, 100f, 50f)
+
+    val moto = Motocicleta(600, "Honda", "CBR600RR", 150f, 100f, 50f)
+
+
+    println("****************VEHICULO**************")
+    println(vehiculo)
+    println("Combustible actual: ${ vehiculo.combustibleActual }")
+    vehiculo.repostar(23f)
+    println("Combustible actual: ${ vehiculo.combustibleActual }")
+    println(vehiculo.obtenerInformacion())
+    println("Combustible actual: ${ vehiculo.combustibleActual }")
+
+    println()
+
+    println("****************AUTOMOVIL**************")
+    println(automovil)
+    println("Combustible actual: ${ automovil.combustibleActual }")
+    automovil.repostar(-5f)
+    println("Combustible actual: ${ automovil.combustibleActual }")
+    println("Autonomia actual: ${automovil.calcularAutonomia()}")
+    println("Combustible actual: ${ automovil.combustibleActual }")
+
+    println()
+
+    println("****************MOTO**************")
+    println(moto)
+    moto.repostar(3f)
+    println(moto)
+    moto.realizarCaballito()
+    println(moto)
+    moto.realizaViaje(50f)
+    println(moto)
+
 }

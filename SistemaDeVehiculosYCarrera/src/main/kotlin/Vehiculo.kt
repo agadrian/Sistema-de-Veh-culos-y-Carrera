@@ -8,20 +8,27 @@ import kotlin.math.roundToInt
  * @property combustibleActual La cantidad actual de combustible en el tanque del vehículo en litros.
  * @property kilometrosActuales El total de kilómetros recorridos por el vehículo.
  */
-open class Vehiculo (val nombre:String, val marca: String, val modelo: String, capacidadCombustible: Float, combustibleActual: Float, var kilometrosActuales: Float){
+abstract class Vehiculo (val nombre:String, val marca: String, val modelo: String, capacidadCombustible: Float, combustibleActual: Float, var kilometrosActuales: Float){
 
     init {
         require(nombre !in listaCoches){"El nombre de ese vehiculo ya existe"}
+
     }
 
-    var combustibleActual = combustibleActual.redondear(2)
+    var combustibleActual = combustibleActual
+        set(value) {
+            value.redondear(2)
+            field = value
+        }
 
-    val capacidadCombustible = capacidadCombustible.redondear(2)
+    private val capacidadCombustible = capacidadCombustible.redondear(2)
 
     companion object{
         const val KM_POR_LITRO = 10.0f
         private val listaCoches = mutableSetOf<String>()
     }
+
+    abstract fun calcularKmL():Float
 
     
     /**
@@ -37,7 +44,7 @@ open class Vehiculo (val nombre:String, val marca: String, val modelo: String, c
      * @return Int - La autonomia
      */
     open fun calcularAutonomia(): Float{
-        return (combustibleActual * KM_POR_LITRO).redondear(2)
+        return (combustibleActual * KM_POR_LITRO)
     }
 
     /**
@@ -49,12 +56,17 @@ open class Vehiculo (val nombre:String, val marca: String, val modelo: String, c
         val autonomia = calcularAutonomia()
 
         val distanciaRecorrida = if (autonomia >= distancia) distancia else autonomia
-
-        combustibleActual -= distanciaRecorrida / KM_POR_LITRO
+        restarCombustible(distanciaRecorrida)
         kilometrosActuales += distanciaRecorrida
 
         return distancia - distanciaRecorrida
     }
+
+    open fun restarCombustible(distanciaRecorrida: Float){
+        combustibleActual -= distanciaRecorrida / KM_POR_LITRO
+    }
+
+
 
     /**
      * Incrementa combustibleActual hasta el máximo de capacidadCombustible si no se pasa

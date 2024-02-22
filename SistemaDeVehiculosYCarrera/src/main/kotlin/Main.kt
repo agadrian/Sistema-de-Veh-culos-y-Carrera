@@ -9,20 +9,13 @@ fun Float.redondear(posiciones: Int): Float{
 
 fun main() {
 
-    val vehiculo = Vehiculo("Vehiculo", "Toyota", "Corolla", 150f, 100f, 50f)
+
 
     val automovil = Automovil( true, false, "Automovil 1","Tesla", "s", 150f, 100f, 50f)
 
     val moto = Motocicleta(600, "MOto 1", "Honda", "CBR600RR", 150f, 100f, 50f)
 
 
-    println("****************VEHICULO**************")
-    println(vehiculo)
-    println("Combustible actual: ${ vehiculo.combustibleActual }")
-    vehiculo.repostar(23f)
-    println("Combustible actual: ${ vehiculo.combustibleActual }")
-    println(vehiculo.obtenerInformacion())
-    println("Combustible actual: ${ vehiculo.combustibleActual }")
 
     println()
 
@@ -37,6 +30,7 @@ fun main() {
     println()
 
     println("****************MOTO**************")
+    println(moto.calcularAutonomia())
     println(moto)
     moto.repostar(3f)
     println(moto)

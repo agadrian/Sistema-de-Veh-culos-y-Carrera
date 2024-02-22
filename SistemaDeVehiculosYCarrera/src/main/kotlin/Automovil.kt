@@ -13,17 +13,18 @@
 class Automovil(val esHibrido: Boolean, condicionBritanica: Boolean,nombre: String, marca: String, modelo: String, capacidadCombustible: Float, combustibleActual: Float, kilometrosActuales: Float) : Vehiculo(nombre, marca, modelo, capacidadCombustible, combustibleActual, kilometrosActuales) {
 
 
+    override fun calcularKmL(): Float {
+        return if (esHibrido) KM_LITRO_HIBRIDO else KM_POR_LITRO
+    }
+
+
     override fun calcularAutonomia(): Float {
-        // (combustibleActual * (KM_POR_LITRO + 5)).redondear(2)
-        return if (esHibrido) {
-            (super.calcularAutonomia() * 1.5f).redondear(2)
-        } else{
-            super.calcularAutonomia()
-        }
+        return combustibleActual * calcularKmL()
     }
 
     companion object {
         var condicionBritanica: Boolean = false
+        const val KM_LITRO_HIBRIDO = 15f
 
         /**
          * Método de clase que permite modificar la configuración de conducción británica para todos los automóviles.

@@ -1,4 +1,4 @@
-class Motocicleta(val cilindrada: Int, marca: String, modelo: String, capacidadCombustible: Float, combustibleActual: Float, kilometrosActuales: Float) : Vehiculo(marca, modelo, capacidadCombustible, combustibleActual, kilometrosActuales) {
+class Motocicleta(val cilindrada: Int, nombre: String, marca: String, modelo: String, capacidadCombustible: Float, combustibleActual: Float, kilometrosActuales: Float) : Vehiculo(nombre, marca, modelo, capacidadCombustible, combustibleActual, kilometrosActuales) {
 
     init {
         require(cilindrada in 125..1000){"La cilindrada debe ser de 125-1000cc"}

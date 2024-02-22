@@ -8,7 +8,11 @@ import kotlin.math.roundToInt
  * @property combustibleActual La cantidad actual de combustible en el tanque del vehículo en litros.
  * @property kilometrosActuales El total de kilómetros recorridos por el vehículo.
  */
-open class Vehiculo (val marca: String, val modelo: String, capacidadCombustible: Float, combustibleActual: Float, var kilometrosActuales: Float){
+open class Vehiculo (val nombre:String, val marca: String, val modelo: String, capacidadCombustible: Float, combustibleActual: Float, var kilometrosActuales: Float){
+
+    init {
+        require(nombre !in listaCoches){"El nombre de ese vehiculo ya existe"}
+    }
 
     var combustibleActual = combustibleActual.redondear(2)
 
@@ -16,8 +20,8 @@ open class Vehiculo (val marca: String, val modelo: String, capacidadCombustible
 
     companion object{
         const val KM_POR_LITRO = 10.0f
+        private val listaCoches = mutableSetOf<String>()
     }
-
 
     
     /**
@@ -26,7 +30,6 @@ open class Vehiculo (val marca: String, val modelo: String, capacidadCombustible
      */
     fun obtenerInformacion(): String {
         return "El vehiculo actualmente puede recorrer: ${combustibleActual * KM_POR_LITRO} kms"
-
     }
 
     /**

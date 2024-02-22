@@ -9,11 +9,11 @@ fun Float.redondear(posiciones: Int): Float{
 
 fun main() {
 
-    val vehiculo = Vehiculo("Toyota", "Corolla", 150f, 100f, 50f)
+    val vehiculo = Vehiculo("Vehiculo", "Toyota", "Corolla", 150f, 100f, 50f)
 
-    val automovil = Automovil(true, false, "Tesla", "s", 150f, 100f, 50f)
+    val automovil = Automovil( true, false, "Automovil 1","Tesla", "s", 150f, 100f, 50f)
 
-    val moto = Motocicleta(600, "Honda", "CBR600RR", 150f, 100f, 50f)
+    val moto = Motocicleta(600, "MOto 1", "Honda", "CBR600RR", 150f, 100f, 50f)
 
 
     println("****************VEHICULO**************")

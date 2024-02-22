@@ -10,7 +10,7 @@
  * @param combustibleActual La cantidad actual de combustible en el tanque del automóvil en litros.
  * @param kilometrosActuales El total de kilómetros recorridos por el automóvil.
  */
-class Automovil(val esHibrido: Boolean, condicionBritanica: Boolean, marca: String, modelo: String, capacidadCombustible: Float, combustibleActual: Float, kilometrosActuales: Float) : Vehiculo(marca, modelo, capacidadCombustible, combustibleActual, kilometrosActuales) {
+class Automovil(val esHibrido: Boolean, condicionBritanica: Boolean,nombre: String, marca: String, modelo: String, capacidadCombustible: Float, combustibleActual: Float, kilometrosActuales: Float) : Vehiculo(nombre, marca, modelo, capacidadCombustible, combustibleActual, kilometrosActuales) {
 
 
     override fun calcularAutonomia(): Float {

@@ -8,11 +8,14 @@ import kotlin.math.roundToInt
  * @property combustibleActual La cantidad actual de combustible en el tanque del vehículo en litros.
  * @property kilometrosActuales El total de kilómetros recorridos por el vehículo.
  */
-abstract class Vehiculo (val nombre:String, val marca: String, val modelo: String, capacidadCombustible: Float, combustibleActual: Float, var kilometrosActuales: Float){
+abstract class Vehiculo (nombre:String, val marca: String, val modelo: String, capacidadCombustible: Float, combustibleActual: Float, var kilometrosActuales: Float){
+
+    val nombre:String = nombre.lowercase().trim()
 
     init {
-        require(nombre !in listaCoches){"El nombre de ese vehiculo ya existe"}
-
+        if (!nombres.add(nombre)) {
+            throw IllegalArgumentException("El nombre de ese vehículo ya existe")
+        }
     }
 
     var combustibleActual = combustibleActual
@@ -25,7 +28,7 @@ abstract class Vehiculo (val nombre:String, val marca: String, val modelo: Strin
 
     companion object{
         const val KM_POR_LITRO = 10.0f
-        private val listaCoches = mutableSetOf<String>()
+        private val nombres = mutableSetOf<String>()
     }
 
     abstract fun calcularKmL():Float
@@ -44,7 +47,7 @@ abstract class Vehiculo (val nombre:String, val marca: String, val modelo: Strin
      * @return Int - La autonomia
      */
     open fun calcularAutonomia(): Float{
-        return (combustibleActual * KM_POR_LITRO)
+        return (combustibleActual * KM_POR_LITRO).redondear(2)
     }
 
     /**
@@ -94,7 +97,7 @@ abstract class Vehiculo (val nombre:String, val marca: String, val modelo: Strin
 
 
     override fun toString(): String {
-        return "Marca: $marca ; Modelo: $modelo ; CapacidadCombustible: $capacidadCombustible ; CombustibleActual: $combustibleActual ; KmActuales: $kilometrosActuales ; Autonomia: ${calcularAutonomia()}"
+        return "Marca: $marca ; Modelo: $modelo ; CapacidadCombustible: $capacidadCombustible ; CombustibleActual: ${combustibleActual.redondear(2)} ; KmActuales: ${kilometrosActuales.redondear(2)} ; Autonomia: ${calcularAutonomia()}"
     }
 
 }

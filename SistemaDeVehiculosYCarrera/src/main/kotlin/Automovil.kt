@@ -42,16 +42,12 @@ class Automovil(val esHibrido: Boolean, condicionBritanica: Boolean,nombre: Stri
      */
     fun realizarDerrape(): Float{
         println("Has derrapao")
-        combustibleActual -= if (esHibrido){
-            (6.25f / (KM_POR_LITRO + 5)).redondear(2)
-        }else{
-            (7.5f / KM_POR_LITRO).redondear(2)
-        }
+        if (esHibrido) restarCombustible(6.25f) else restarCombustible(7.5f)
         return combustibleActual
     }
 
     override fun toString(): String {
-        return super.toString() + " ; EsElectrico: $esHibrido ; CondicionBritanica: $condicionBritanica ; Autonomia: ${calcularAutonomia()}"
+        return super.toString() + " ; EsElectrico: $esHibrido ; CondicionBritanica: $condicionBritanica"
     }
 
 }

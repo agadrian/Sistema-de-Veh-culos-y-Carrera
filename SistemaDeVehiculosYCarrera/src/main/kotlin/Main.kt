@@ -10,7 +10,6 @@ fun Float.redondear(posiciones: Int): Float{
 fun main() {
 
 
-
     val automovil = Automovil( true, false, "Automovil 1","Tesla", "s", 150f, 100f, 50f)
 
     val moto = Motocicleta(600, "MOto 1", "Honda", "CBR600RR", 150f, 100f, 50f)
@@ -21,16 +20,25 @@ fun main() {
 
     println("****************AUTOMOVIL**************")
     println(automovil)
-    println("Combustible actual: ${ automovil.combustibleActual }")
-    automovil.repostar(-5f)
-    println("Combustible actual: ${ automovil.combustibleActual }")
-    println("Autonomia actual: ${automovil.calcularAutonomia()}")
-    println("Combustible actual: ${ automovil.combustibleActual }")
+    automovil.realizarDerrape()
+    println(automovil)
+    automovil.realizarDerrape()
+    println(automovil)
+    automovil.repostar(5f)
+    println(automovil)
+    automovil.realizaViaje(1000f)
+    println(automovil)
+    automovil.realizarDerrape()
+    println(automovil)
+    automovil.repostar(15f)
+    println(automovil)
+    automovil.realizaViaje(500f)
+    println(automovil)
+
 
     println()
 
     println("****************MOTO**************")
-    println(moto.calcularAutonomia())
     println(moto)
     moto.repostar(3f)
     println(moto)
@@ -38,5 +46,12 @@ fun main() {
     println(moto)
     moto.realizaViaje(50f)
     println(moto)
-
+    moto.realizarCaballito()
+    moto.realizarCaballito()
+    moto.realizarCaballito()
+    println(moto)
+    moto.realizaViaje(1050f)
+    println(moto)
+    moto.realizaViaje(870f)
+    println(moto)
 }

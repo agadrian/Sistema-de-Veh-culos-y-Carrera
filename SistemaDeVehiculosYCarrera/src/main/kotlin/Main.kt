@@ -10,12 +10,15 @@ fun Float.redondear(posiciones: Int): Float{
 fun main() {
 
 
-    val automovil = Automovil( true, false, "Automovil 1","Tesla", "s", 150f, 100f, 50f)
+   /* val automovil = Automovil( true, false, "Automovil 1","Tesla", "s", 150f, 100f, 50f)
 
-    val moto = Motocicleta(600, "MOto 1", "Honda", "CBR600RR", 150f, 100f, 50f)
+    val moto = Motocicleta(600, "MOto 1", "Honda", "CBR600RR", 150f, 100f, 50f)*/
 
 
 
+
+
+/*
     println()
 
     println("****************AUTOMOVIL**************")
@@ -53,5 +56,5 @@ fun main() {
     moto.realizaViaje(1050f)
     println(moto)
     moto.realizaViaje(870f)
-    println(moto)
+    println(moto)*/
 }

@@ -4,12 +4,12 @@ class Motocicleta(nombre: String, marca: String, modelo: String, capacidadCombus
 
     init {
         require(cilindrada in 125..1000){"La cilindrada debe ser de 125-1000cc"}
-
     }
 
     companion object{
         const val KM_LITRO_BASE_MOTO = 20f
     }
+
 
     /**
      * Calcula cuantos km hace por litro dependiendo de su cilindrada
@@ -17,6 +17,7 @@ class Motocicleta(nombre: String, marca: String, modelo: String, capacidadCombus
     override fun calcularKmL():Float{
         return if (cilindrada == 1000) KM_LITRO_BASE_MOTO else KM_LITRO_BASE_MOTO - (cilindrada.toFloat() / 1000f)
     }
+
 
     /**
      * Calcula la autonomia de kilometros de la moto dependiendo de su km/l

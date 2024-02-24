@@ -1,11 +1,9 @@
 import kotlin.random.Random
 
-class Carrera (val nombreCarrera: String,
-               val distanciaTotal: Float,
-               val participantes: List<Vehiculo>,
-               var estadoCarrera: Boolean) {
+class Carrera (val nombreCarrera: String, val distanciaTotal: Float, val participantes: List<Vehiculo>) {
 
     val historialAcciones: MutableMap<String, MutableList<String>> = mutableMapOf()
+    var estadoCarrera: Boolean = false
 
     /**
      * Inicia la carrera, estableciendo estadoCarrera a true y comenzando el ciclo de iteraciones donde los vehículos avanzan y realizan acciones.
@@ -15,8 +13,11 @@ class Carrera (val nombreCarrera: String,
 
         while (estadoCarrera) {
 
+            val vehiculoRandom = participantes.random()
+            avanzarVehiculo(vehiculoRandom)
+            determinarGanador()
+            break
         }
-
     }
 
 
@@ -29,8 +30,11 @@ class Carrera (val nombreCarrera: String,
 
         if (distanciaARecorrer < 20f && autonomia < distanciaARecorrer) {
             vehiculo.realizaViaje(autonomia)
+            añadirAccion(vehiculo, "Ha recorrido $autonomia")
             repostarVehiculo(vehiculo, 0f)
+            añadirAccion(vehiculo, "Ha repostado. Tanque lleno")
             vehiculo.realizaViaje(distanciaARecorrer - autonomia)
+            añadirAccion(vehiculo, "Ha recorrido ${distanciaARecorrer - autonomia}")
         } else if (distanciaARecorrer >= 20f) {
             var distanciaRecorrida = 0f
 
@@ -39,20 +43,25 @@ class Carrera (val nombreCarrera: String,
 
                 if (autonomia < 20f) {
                     vehiculo.realizaViaje(autonomia)
+                    añadirAccion(vehiculo, "Ha recorrido $autonomia")
                     repostarVehiculo(vehiculo, 0f)
+                    añadirAccion(vehiculo, "Ha repostado. Tanque lleno")
                     distanciaRecorrida += autonomia
+
                 } else {
-                    val distanciaTramo =
-                        if (distanciaARecorrer - distanciaRecorrida >= 20f) 20f else distanciaARecorrer - distanciaRecorrida
+                    val distanciaTramo = if (distanciaARecorrer - distanciaRecorrida >= 20f) 20f else distanciaARecorrer - distanciaRecorrida
                     vehiculo.realizaViaje(distanciaTramo)
+                    añadirAccion(vehiculo, "Ha recorrido $distanciaTramo")
 
                     if (distanciaRecorrida % 20f == 0f) {
-                        if (numRandom == 1) realizarFiligrana(vehiculo) else {
+                        if (numRandom == 1) {
+                            realizarFiligrana(vehiculo)
+                        } else {
                             realizarFiligrana(vehiculo)
                             realizarFiligrana(vehiculo)
                         }
                     }
-                    distanciaRecorrida += autonomia
+                    distanciaRecorrida += distanciaTramo
                 }
             }
         }
@@ -101,33 +110,49 @@ class Carrera (val nombreCarrera: String,
             vehiculo.realizarCaballito()
             añadirAccion(vehiculo, "Ha hecho un wheelie. Combustible: ${vehiculo.combustibleActual}")
         }
-
-
     }
 
-
-
-
-    /**
-     *  Actualiza posiciones con los kilómetros recorridos por cada vehículo después de cada iteración, manteniendo un seguimiento de la competencia.
-     */
-    fun actualizarPosiciones(){
-
-    }
 
 
     /**
      * Revisa posiciones para identificar al vehículo (o vehículos) que haya alcanzado o superado la distanciaTotal, estableciendo el estado de la carrera a finalizado y determinando el ganador.
      */
     fun determinarGanador(){
+        var ganador: Vehiculo? = null
 
+        // La mayor distancia encontrada entre todos los vehiculos
+        var distanciaMax = 0f
+
+        for (vehiculo in participantes){
+            if (vehiculo.kilometrosActuales >= distanciaTotal){
+                estadoCarrera = false
+            }
+
+            if (vehiculo.kilometrosActuales > distanciaMax){
+                ganador = vehiculo
+                distanciaMax = vehiculo.kilometrosActuales
+            }
+        }
+
+        if (ganador != null) println("El ganador es ${ganador.nombre}") else println("No hay ganador")
     }
 
 
     /**
      * Devuelve una clasificación final de los vehículos, cada elemento tendrá el nombre del vehiculo, posición ocupada, la distancia total recorrida, el número de paradas para repostar y el historial de acciones. La collección estará ordenada por la posición ocupada.
      */
-    fun obtenerResultados(){
+    fun obtenerResultados(): List<ResultadoCarrera>{
+        val resultados = mutableListOf<ResultadoCarrera>()
+        val participantesOrdenados = participantes.sortedByDescending { it.kilometrosActuales }
+
+        for ((index, vehiculo) in participantesOrdenados.withIndex()) {
+            val paradasRepostaje = historialAcciones[vehiculo.nombre]?.count { it.contains("repostado") } ?: 0
+            val historialAcc = historialAcciones[vehiculo.nombre] ?: listOf()
+
+            resultados.add(ResultadoCarrera(vehiculo, index + 1, vehiculo.kilometrosActuales, paradasRepostaje, historialAcc))
+        }
+
+        return resultados
 
     }
 

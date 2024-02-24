@@ -22,6 +22,7 @@ class Automovil(nombre: String, marca: String, modelo: String, capacidadCombusti
         return combustibleActual * calcularKmL()
     }
 
+
     companion object {
         var condicionBritanica: Boolean = false
         const val KM_LITRO_HIBRIDO = 15f
@@ -32,9 +33,7 @@ class Automovil(nombre: String, marca: String, modelo: String, capacidadCombusti
         fun cambiarCondicionBritanica(nuevaCondicion: Boolean){
             condicionBritanica = nuevaCondicion
         }
-
     }
-
 
 
     /**
@@ -45,6 +44,7 @@ class Automovil(nombre: String, marca: String, modelo: String, capacidadCombusti
         if (esHibrido) restarCombustible(6.25f) else restarCombustible(7.5f)
         return combustibleActual
     }
+
 
     override fun toString(): String {
         return super.toString() + " ; EsElectrico: $esHibrido ; CondicionBritanica: $condicionBritanica"

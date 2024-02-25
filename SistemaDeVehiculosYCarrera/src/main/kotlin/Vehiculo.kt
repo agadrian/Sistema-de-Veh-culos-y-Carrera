@@ -1,12 +1,10 @@
-import kotlin.math.roundToInt
-
 /**
- * Clase que representa un vehículo genérico.
- * @property marca La marca del vehículo.
- * @property modelo El modelo del vehículo.
- * @property capacidadCombustible La capacidad total del tanque de combustible del vehículo en litros.
- * @property combustibleActual La cantidad actual de combustible en el tanque del vehículo en litros.
- * @property kilometrosActuales El total de kilómetros recorridos por el vehículo.
+ * Clase que representa un vehiculo generico.
+ * @property marca La marca del vehiculo.
+ * @property modelo El modelo del vehiculo.
+ * @property capacidadCombustible La capacidad total del tanque de combustible del vehiculo en litros.
+ * @property combustibleActual La cantidad actual de combustible en el tanque del vehiculo en litros.
+ * @property kilometrosActuales El total de kilometros recorridos por el vehiculo.
  */
 abstract class Vehiculo (nombre:String, private val marca: String, private val modelo: String, capacidadCombustible: Float, combustibleActual: Float, var kilometrosActuales: Float){
 
@@ -22,10 +20,9 @@ abstract class Vehiculo (nombre:String, private val marca: String, private val m
             field = value
         }
 
+    // Comprobar si el nombre ya existe en la lista de vehiculos
     init {
-        if (!nombres.add(nombre)) {
-            throw IllegalArgumentException("El nombre de ese vehículo ya existe")
-        }
+        require(nombres.add(nombre)){"El nombre de ese vehiculo ya existe"}
     }
 
 
@@ -41,7 +38,7 @@ abstract class Vehiculo (nombre:String, private val marca: String, private val m
 
     
     /**
-     * Retorna los kilómetros que el vehículo puede recorrer con el combustible actual (suponemos que cada litro da para 10 km)
+     * Retorna los kilometros que el vehiculo puede recorrer con el combustible actual (suponemos que cada litro da para 10 km)
      * @return String - Cadena de texto inormando de los km que se pueden recorrer
      */
     fun obtenerInformacion(): String {
@@ -60,8 +57,8 @@ abstract class Vehiculo (nombre:String, private val marca: String, private val m
 
     /**
      * Realiza un viaje hasta donde da el combustible actual.
-     * @param distancia La distancia a recorrer en kilómetros.
-     * @return Float - La distancia recorrida en kilómetros.
+     * @param distancia La distancia a recorrer en kilometros.
+     * @return Float - La distancia recorrida en kilometros.
      */
     open fun realizaViaje(distancia: Float): Float{
         val autonomia = calcularAutonomia()
@@ -75,17 +72,16 @@ abstract class Vehiculo (nombre:String, private val marca: String, private val m
 
 
     /**
-     * Reduce el combustible actual del vehículo según la distancia recorrida.
-     * @param distanciaRecorrida La distancia recorrida en kilómetros.
+     * Reduce el combustible actual del vehiculo segun la distancia recorrida.
+     * @param distanciaRecorrida La distancia recorrida en kilometros.
      */
     open fun restarCombustible(distanciaRecorrida: Float){
         combustibleActual -= distanciaRecorrida / KM_POR_LITRO
     }
 
 
-
     /**
-     * Incrementa combustibleActual hasta el máximo de capacidadCombustible si no se pasa
+     * Incrementa combustibleActual hasta el maximo de capacidadCombustible si no se pasa
      * cantidad o si cantidad es O o negativa. Sino, incrementa en cantidad hasta llegar a capacidadCombustible.
      * @return Float - La cantidad repostada en litros.
      */
@@ -108,15 +104,15 @@ abstract class Vehiculo (nombre:String, private val marca: String, private val m
 
 
     /**
-     * Obtiene el número de veces que se ha repostado combustible.
-     * @return Int - El número de repostajes realizados.
+     * Obtiene el numero de veces que se ha repostado combustible.
+     * @return Int - El numero de repostajes realizados.
      */
     fun obtenerContRepostaje() = contRepostajes
 
 
     /**
-     * Devuelve una representación en forma de cadena de Vehiculo.
-     * @return String - La representación en forma de cadena del objeto.
+     * Devuelve una representacion en forma de cadena de Vehiculo.
+     * @return String - La representacion en forma de cadena del objeto.
      */
     override fun toString(): String {
         return "Marca: $marca ; Modelo: $modelo ; CapacidadCombustible: $capacidadCombustible ; CombustibleActual: ${combustibleActual.redondear(2)} ; KmActuales: ${kilometrosActuales.redondear(2)} ; Autonomia: ${calcularAutonomia()}"

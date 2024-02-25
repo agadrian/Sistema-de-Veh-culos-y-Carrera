@@ -1,13 +1,24 @@
-import java.util.*
 
-
+/**
+ * Clase que representa una carrera de vehiculos.
+ * @property nombreCarrera El nombre de la carrera.
+ * @property distanciaTotal La distancia total de la carrera en kilometros.
+ * @property participantes La lista de vehiculos que participan en la carrera.
+ * @property historialAcciones Un mapa mutable que registra el historial de acciones realizadas por cada vehiculo durante la carrera.
+ * @property estadoCarrera Indica si la carrera esta en curso (true) o ha finalizado (false).
+ *
+ * @constructor Crea una nueva carrera con los siguientes parametros:
+ * @param nombreCarrera El nombre de la carrera.
+ * @param distanciaTotal La distancia total de la carrera en kilometros.
+ * @param participantes La lista de vehiculos que participan en la carrera.
+ */
 class Carrera (val nombreCarrera: String, private val distanciaTotal: Float, private val participantes: List<Vehiculo>) {
 
     private val historialAcciones: MutableMap<String, MutableList<String>> = mutableMapOf<String, MutableList<String>>()
     private var estadoCarrera: Boolean = false
 
     /**
-     * Inicia la carrera, estableciendo estadoCarrera a true y comenzando el ciclo de iteraciones donde los vehículos avanzan y realizan acciones.
+     * Inicia la carrera, estableciendo estadoCarrera a true y comenzando el ciclo de iteraciones donde los vehiculos avanzan y realizan acciones.
      */
     fun iniciarCarrera() {
         estadoCarrera = true
@@ -21,14 +32,14 @@ class Carrera (val nombreCarrera: String, private val distanciaTotal: Float, pri
 
 
     /**
-     * Identificado el vehículo, le hace avanzar una distancia aleatoria entre 10 y 200 km. Si el vehículo necesita repostar, se llama al método repostarVehiculo() antes de que pueda continuar. Este método llama a realizar filigranas.
+     * Identificado el vehiculo, le hace avanzar una distancia aleatoria entre 10 y 200 km. Si el vehiculo necesita repostar, se llama al metodo repostarVehiculo() antes de que pueda continuar. Este metodo llama a realizar filigranas.
      */
     private fun avanzarVehiculo(vehiculo: Vehiculo){
         val distanciaARecorrer = ((10..200).random()).toFloat()
         var distanciaRecorrida = 0f
         var distanciaUltimaFil = 0f
 
-        añadirAccion(vehiculo.nombre, "*** Inicia recorrido. Recorrido: $distanciaARecorrer kms. Combustible: ${vehiculo.combustibleActual} Litros ***")
+        añadirAccion(vehiculo.nombre, "*** Inicia recorrido. Recorrido: $distanciaARecorrer kms. Combustible: ${vehiculo.combustibleActual.redondear(2)} Litros ***")
 
         while (distanciaRecorrida < distanciaARecorrer){
             val distanciaRestante = distanciaARecorrer - distanciaRecorrida
@@ -82,7 +93,6 @@ class Carrera (val nombreCarrera: String, private val distanciaTotal: Float, pri
                         realizarFiligrana(vehiculo)
                     }
                 }
-
                 // Resetear el contador de la filigrana
                 distanciaUltimaFil = 0f
             }
@@ -106,7 +116,7 @@ class Carrera (val nombreCarrera: String, private val distanciaTotal: Float, pri
 
 
     /**
-     * Reposta el vehículo seleccionado, incrementando su combustibleActual y registrando la acción en historialAcciones.
+     * Reposta el vehiculo seleccionado, incrementando su combustibleActual y registrando la accion en historialAcciones.
      */
     private fun repostarVehiculo(vehiculo: Vehiculo, cantidad: Float = 0f){
         vehiculo.repostar(cantidad)
@@ -115,7 +125,7 @@ class Carrera (val nombreCarrera: String, private val distanciaTotal: Float, pri
 
 
     /**
-     * Determina aleatoriamente si un vehículo realiza una filigrana (derrape o caballito) y registra la acción.
+     * Determina aleatoriamente si un vehiculo realiza una filigrana (derrape o caballito) y registra la accion.
      */
     private fun realizarFiligrana(vehiculo: Vehiculo) {
         if (vehiculo is Automovil) {
@@ -130,7 +140,7 @@ class Carrera (val nombreCarrera: String, private val distanciaTotal: Float, pri
     
 
     /**
-     * Revisa posiciones para identificar al vehículo (o vehículos) que haya alcanzado o superado la distanciaTotal, estableciendo el estado de la carrera a finalizado y determinando el ganador.
+     * Revisa posiciones para identificar al vehiculo (o vehiculos) que haya alcanzado o superado la distanciaTotal, estableciendo el estado de la carrera a finalizado y determinando el ganador.
      */
     private fun determinarGanador() {
         for (vehiculo in participantes) {
@@ -143,7 +153,8 @@ class Carrera (val nombreCarrera: String, private val distanciaTotal: Float, pri
 
 
     /**
-     * Devuelve una clasificación final de los vehículos, cada elemento tendrá el nombre del vehiculo, posición ocupada, la distancia total recorrida, el número de paradas para repostar y el historial de acciones. La collección estará ordenada por la posición ocupada.
+     * Devuelve una clasificacion final de los vehiculos, cada elemento tendra el nombre del vehiculo, posicion ocupada, la distancia total recorrida, el numero de paradas para repostar y el historial de acciones. La colleccion estara ordenada por los km totales recorridos
+     * @return resultados: Lista de tipo ResultadoCarrera que contiene la informacion de cada vehiculo en la carrera
      */
     fun obtenerResultados(): List<ResultadoCarrera>{
         val resultados = mutableListOf<ResultadoCarrera>()
@@ -159,16 +170,15 @@ class Carrera (val nombreCarrera: String, private val distanciaTotal: Float, pri
     }
 
 
-
     /**
-     * Representa el resultado final de un vehículo en la carrera, incluyendo su posición final, el kilometraje total recorrido,
-     * el número de paradas para repostar, y un historial detallado de todas las acciones realizadas durante la carrera.
+     * Representa el resultado final de un vehiculo en la carrera, incluyendo su posicion final, el kilometraje total recorrido,
+     * el numero de paradas para repostar, y un historial detallado de todas las acciones realizadas durante la carrera.
      *
-     * @property vehiculo El [Vehiculo] al que pertenece este resultado.
-     * @property posicion La posición final del vehículo en la carrera, donde una posición menor indica un mejor rendimiento.
-     * @property kilometraje El total de kilómetros recorridos por el vehículo durante la carrera.
-     * @property paradasRepostaje El número de veces que el vehículo tuvo que repostar combustible durante la carrera.
-     * @property historialAcciones Una lista de cadenas que describen las acciones realizadas por el vehículo a lo largo de la carrera, proporcionando un registro detallado de su rendimiento y estrategias.
+     * @property vehiculo El vehiculo al que pertenece este resultado.
+     * @property posicion La posicion final del vehiculo en la carrera, donde una posicion menor indica un mejor rendimiento.
+     * @property kilometraje El total de kilometros recorridos por el vehiculo durante la carrera.
+     * @property paradasRepostaje El numero de veces que el vehiculo tuvo que repostar combustible durante la carrera.
+     * @property historialAcciones Una lista de cadenas que describen las acciones realizadas por el vehiculo a lo largo de la carrera, proporcionando un registro detallado de su rendimiento y estrategias.
      */
     data class ResultadoCarrera(
         val vehiculo: Vehiculo,

@@ -1,9 +1,10 @@
-import kotlin.random.Random
+import java.util.*
 
-class Carrera (val nombreCarrera: String, val distanciaTotal: Float, val participantes: List<Vehiculo>) {
 
-    val historialAcciones: MutableMap<String, MutableList<String>> = mutableMapOf()
-    var estadoCarrera: Boolean = false
+class Carrera (val nombreCarrera: String, private val distanciaTotal: Float, private val participantes: List<Vehiculo>) {
+
+    private val historialAcciones: MutableMap<String, MutableList<String>> = mutableMapOf<String, MutableList<String>>()
+    private var estadoCarrera: Boolean = false
 
     /**
      * Inicia la carrera, estableciendo estadoCarrera a true y comenzando el ciclo de iteraciones donde los vehículos avanzan y realizan acciones.
@@ -12,11 +13,9 @@ class Carrera (val nombreCarrera: String, val distanciaTotal: Float, val partici
         estadoCarrera = true
 
         while (estadoCarrera) {
-
             val vehiculoRandom = participantes.random()
             avanzarVehiculo(vehiculoRandom)
             determinarGanador()
-            break
         }
     }
 
@@ -24,50 +23,69 @@ class Carrera (val nombreCarrera: String, val distanciaTotal: Float, val partici
     /**
      * Identificado el vehículo, le hace avanzar una distancia aleatoria entre 10 y 200 km. Si el vehículo necesita repostar, se llama al método repostarVehiculo() antes de que pueda continuar. Este método llama a realizar filigranas.
      */
-    fun avanzarVehiculo(vehiculo: Vehiculo) {
+    private fun avanzarVehiculo(vehiculo: Vehiculo){
         val distanciaARecorrer = ((10..200).random()).toFloat()
-        val autonomia = vehiculo.calcularAutonomia()
+        var distanciaRecorrida = 0f
+        var distanciaUltimaFil = 0f
 
-        if (distanciaARecorrer < 20f && autonomia < distanciaARecorrer) {
-            vehiculo.realizaViaje(autonomia)
-            añadirAccion(vehiculo, "Ha recorrido $autonomia")
-            repostarVehiculo(vehiculo, 0f)
-            añadirAccion(vehiculo, "Ha repostado. Tanque lleno")
-            vehiculo.realizaViaje(distanciaARecorrer - autonomia)
-            añadirAccion(vehiculo, "Ha recorrido ${distanciaARecorrer - autonomia}")
-        } else if (distanciaARecorrer >= 20f) {
-            var distanciaRecorrida = 0f
+        añadirAccion(vehiculo.nombre, "*** Inicia recorrido. Recorrido: $distanciaARecorrer kms. Combustible: ${vehiculo.combustibleActual} Litros ***")
 
-            while (distanciaRecorrida < distanciaARecorrer) {
-                val numRandom = (1..2).random()
+        while (distanciaRecorrida < distanciaARecorrer){
+            val distanciaRestante = distanciaARecorrer - distanciaRecorrida
+            val distanciaTramo = minOf(distanciaRestante, 20f)
+            val numRandom = (1..2).random()
 
-                if (autonomia < 20f) {
+            // Atuotnomia
+            val autonomia = vehiculo.calcularAutonomia()
+
+            if (autonomia < distanciaTramo){
+                // Si no tiene autonomia suficiente, gasta la que tiene y reposta
+                if (autonomia > 0f) {
                     vehiculo.realizaViaje(autonomia)
-                    añadirAccion(vehiculo, "Ha recorrido $autonomia")
-                    repostarVehiculo(vehiculo, 0f)
-                    añadirAccion(vehiculo, "Ha repostado. Tanque lleno")
                     distanciaRecorrida += autonomia
-
-                } else {
-                    val distanciaTramo = if (distanciaARecorrer - distanciaRecorrida >= 20f) 20f else distanciaARecorrer - distanciaRecorrida
-                    vehiculo.realizaViaje(distanciaTramo)
-                    añadirAccion(vehiculo, "Ha recorrido $distanciaTramo")
-
-                    if (distanciaRecorrida % 20f == 0f) {
-                        if (numRandom == 1) {
-                            realizarFiligrana(vehiculo)
-                        } else {
-                            realizarFiligrana(vehiculo)
-                            realizarFiligrana(vehiculo)
-                        }
-                    }
-                    distanciaRecorrida += distanciaTramo
+                    añadirAccion(vehiculo.nombre, "Recorre ${autonomia.redondear(2)} km. ")
+                    distanciaUltimaFil += autonomia
+                    repostarVehiculo(vehiculo)
                 }
             }
-        }
-        // La distancia es menor a 20 pero tengo suficiente autonomia
-        else {
-            vehiculo.realizaViaje(distanciaARecorrer)
+
+            else{
+                // Avanzar
+                val tramoRecorrido = vehiculo.realizaViaje(distanciaTramo)
+                distanciaRecorrida += tramoRecorrido
+                añadirAccion(vehiculo.nombre, "Recorre ${tramoRecorrido.redondear(2)} km. ")
+
+                // Actualizar distancia ultima filigrana
+                distanciaUltimaFil += tramoRecorrido
+            }
+
+            // Realizar filigrana cada 20 km. Se comprueba si teienen combustible, si no repostan.
+            if (distanciaUltimaFil >= 20f) {
+                val autoFili = vehiculo.calcularAutonomia()
+
+                if (numRandom == 1) {
+                    if (autoFili >= 7.5f){
+                        realizarFiligrana(vehiculo)
+                    }else{
+                        repostarVehiculo(vehiculo)
+                        realizarFiligrana(vehiculo)
+                    }
+
+                } else {
+                    if (autoFili >= 15f) {
+                        realizarFiligrana(vehiculo)
+                        realizarFiligrana(vehiculo)
+                    }
+                    else{
+                        repostarVehiculo(vehiculo)
+                        realizarFiligrana(vehiculo)
+                        realizarFiligrana(vehiculo)
+                    }
+                }
+
+                // Resetear el contador de la filigrana
+                distanciaUltimaFil = 0f
+            }
         }
     }
 
@@ -75,66 +93,52 @@ class Carrera (val nombreCarrera: String, val distanciaTotal: Float, val partici
     /**
      * Añade una accion a un vehiculo en el historial de acciones. Si no existe el nombre, lo crea con una lista.
      * @param vehiculo Objeto de tipo Vehiculo
-     * @param Accion String de la accion que se registra en el historial de acciones
+     * @param accion String de la accion que se registra en el historial de acciones
      */
-    fun añadirAccion(vehiculo: Vehiculo, accion: String){
+    private fun añadirAccion(vehiculo: String, accion: String){
         // Si no esta en el historial, lo añadimos, y sis esta, solo añadimos la accion
-        if (historialAcciones.containsKey(vehiculo.nombre)) {
-            historialAcciones[vehiculo.nombre]!!.add(accion)
+        if (historialAcciones.containsKey(vehiculo)) {
+            historialAcciones[vehiculo]!!.add(accion)
         } else {
-            historialAcciones[vehiculo.nombre] = mutableListOf(accion)
+            historialAcciones[vehiculo] = mutableListOf(accion)
         }
     }
-
 
 
     /**
      * Reposta el vehículo seleccionado, incrementando su combustibleActual y registrando la acción en historialAcciones.
      */
-    fun repostarVehiculo(vehiculo: Vehiculo, cantidad: Float){
+    private fun repostarVehiculo(vehiculo: Vehiculo, cantidad: Float = 0f){
         vehiculo.repostar(cantidad)
-
-        añadirAccion(vehiculo, "Ha repostado llenando el tanque")
+        añadirAccion(vehiculo.nombre, "Llena el tanque. ")
     }
 
 
     /**
      * Determina aleatoriamente si un vehículo realiza una filigrana (derrape o caballito) y registra la acción.
      */
-    fun realizarFiligrana(vehiculo: Vehiculo) {
+    private fun realizarFiligrana(vehiculo: Vehiculo) {
         if (vehiculo is Automovil) {
             vehiculo.realizarDerrape()
-            añadirAccion(vehiculo, "Ha derrapado. Combustible: ${vehiculo.combustibleActual}")
+            añadirAccion(vehiculo.nombre, "Ha derrapado. Combustible: ${vehiculo.combustibleActual.redondear(2)}. ")
         }
         else if (vehiculo is Motocicleta) {
             vehiculo.realizarCaballito()
-            añadirAccion(vehiculo, "Ha hecho un wheelie. Combustible: ${vehiculo.combustibleActual}")
+            añadirAccion(vehiculo.nombre, "Ha hecho un wheelie. Combustible: ${vehiculo.combustibleActual.redondear(2)}. ")
         }
     }
-
-
+    
 
     /**
      * Revisa posiciones para identificar al vehículo (o vehículos) que haya alcanzado o superado la distanciaTotal, estableciendo el estado de la carrera a finalizado y determinando el ganador.
      */
-    fun determinarGanador(){
-        var ganador: Vehiculo? = null
-
-        // La mayor distancia encontrada entre todos los vehiculos
-        var distanciaMax = 0f
-
-        for (vehiculo in participantes){
-            if (vehiculo.kilometrosActuales >= distanciaTotal){
+    private fun determinarGanador() {
+        for (vehiculo in participantes) {
+            if (vehiculo.kilometrosActuales >= distanciaTotal) {
+                println("El ganador de '$nombreCarrera' es ... ${vehiculo.nombre.capitalizar()}!!")
                 estadoCarrera = false
             }
-
-            if (vehiculo.kilometrosActuales > distanciaMax){
-                ganador = vehiculo
-                distanciaMax = vehiculo.kilometrosActuales
-            }
         }
-
-        if (ganador != null) println("El ganador es ${ganador.nombre}") else println("No hay ganador")
     }
 
 
@@ -146,14 +150,12 @@ class Carrera (val nombreCarrera: String, val distanciaTotal: Float, val partici
         val participantesOrdenados = participantes.sortedByDescending { it.kilometrosActuales }
 
         for ((index, vehiculo) in participantesOrdenados.withIndex()) {
-            val paradasRepostaje = historialAcciones[vehiculo.nombre]?.count { it.contains("repostado") } ?: 0
+            val paradasRepostaje = vehiculo.obtenerContRepostaje()
             val historialAcc = historialAcciones[vehiculo.nombre] ?: listOf()
-
+            if (vehiculo.kilometrosActuales > 1000f) vehiculo.kilometrosActuales = 1000f
             resultados.add(ResultadoCarrera(vehiculo, index + 1, vehiculo.kilometrosActuales, paradasRepostaje, historialAcc))
         }
-
         return resultados
-
     }
 
 

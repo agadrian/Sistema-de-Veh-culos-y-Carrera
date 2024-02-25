@@ -10,17 +10,7 @@
  * @param combustibleActual La cantidad actual de combustible en el tanque del automóvil en litros.
  * @param kilometrosActuales El total de kilómetros recorridos por el automóvil.
  */
-class Automovil(nombre: String, marca: String, modelo: String, capacidadCombustible: Float, combustibleActual: Float, kilometrosActuales: Float, val esHibrido: Boolean, condicionBritanica: Boolean = false) : Vehiculo(nombre, marca, modelo, capacidadCombustible, combustibleActual, kilometrosActuales) {
-
-
-    override fun calcularKmL(): Float {
-        return if (esHibrido) KM_LITRO_HIBRIDO else KM_POR_LITRO
-    }
-
-
-    override fun calcularAutonomia(): Float {
-        return combustibleActual * calcularKmL()
-    }
+class Automovil(nombre: String, marca: String, modelo: String, capacidadCombustible: Float, combustibleActual: Float, kilometrosActuales: Float, private val esHibrido: Boolean, condicionBritanica: Boolean = false) : Vehiculo(nombre, marca, modelo, capacidadCombustible, combustibleActual, kilometrosActuales) {
 
 
     companion object {
@@ -37,15 +27,46 @@ class Automovil(nombre: String, marca: String, modelo: String, capacidadCombusti
 
 
     /**
+     * Calcula la cantidad de kilómetros que el automóvil puede recorrer por litro de combustible, dependiendo de si es híbrido o no.
+     * @return La cantidad de kilómetros por litro del automóvil.
+     */
+    override fun calcularKmL(): Float {
+        return if (esHibrido) KM_LITRO_HIBRIDO else KM_POR_LITRO
+    }
+
+
+    /**
+     * Calcula la autonomía del automóvil en kilómetros, teniendo en cuenta la cantidad de combustible actual y su eficiencia en kilómetros por litro.
+     * @return La autonomía del automóvil en kilómetros.
+     */
+    override fun calcularAutonomia(): Float {
+        return (combustibleActual * calcularKmL()).redondear(2)
+    }
+
+
+    /**
+     * Resta la cantidad de combustible equivalente a la distancia pasada como paramtro
+     * @param distanciaRecorrida Distancia a restar en combustible
+     */
+    override fun restarCombustible(distanciaRecorrida: Float) {
+        combustibleActual -= distanciaRecorrida / calcularKmL()
+    }
+
+
+    /**
      * Método que simula un derrape. Realiza una gasto adicional en el combustible, retornando el combustible restante. El gasto equivale a haber realizado 7,5 km o 6,25 km si es híbrido.
+     * @return El combustible restante después de realizar el derrape.
      */
     fun realizarDerrape(): Float{
-        println("Has derrapao")
         if (esHibrido) restarCombustible(6.25f) else restarCombustible(7.5f)
         return combustibleActual
     }
 
 
+    /**
+     * Devuelve una representación en forma de cadena de Automovil.
+     * @return String - La representación en forma de cadena del objeto.
+     */
     override fun toString(): String {
         return super.toString() + " ; EsElectrico: $esHibrido ; CondicionBritanica: $condicionBritanica"
     }

@@ -13,11 +13,22 @@ fun Float.redondear(posiciones: Int): Float{
 /**
  * Crear metodo capitalizar para los strings
  */
-internal fun String.capitalizar(): String {
+fun String.capitalizar(): String {
     return this.replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString() }
 }
 
+/**
+ * Elimina espacios iniciales y finales, capitaliza las palabras y las separa por un unico espacio
+ */
+fun String.espaciosCapit(): String{
+    val palabras = this.trim().split(" ")
+    return palabras.filter { it.isNotBlank() }.joinToString(" ") { it.trim().capitalizar() }
+}
+
 fun main() {
+    val str = "   hola que  tal    es   tu dia   "
+    println(str.espaciosCapit())
+    println(str.capitalizar())
 
     // Creacion vehiculos
 

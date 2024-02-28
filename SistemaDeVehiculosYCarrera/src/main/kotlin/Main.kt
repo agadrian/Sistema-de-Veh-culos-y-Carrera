@@ -26,9 +26,6 @@ fun String.espaciosCapit(): String{
 }
 
 fun main() {
-    val str = "   hola que  tal    es   tu dia   "
-    println(str.espaciosCapit())
-    println(str.capitalizar())
 
     // Creacion vehiculos
 

@@ -17,6 +17,18 @@ class Carrera (val nombreCarrera: String, private val distanciaTotal: Float, pri
     private val historialAcciones: MutableMap<String, MutableList<String>> = mutableMapOf<String, MutableList<String>>()
     private var estadoCarrera: Boolean = false
 
+
+    /**
+     * Aleatoriamente abre una caja sorpresa y aplica una acción al vehículo proporcionado.
+     * @param vehiculo El vehículo al que se aplicará la acción de la caja sorpresa.
+     */
+    private fun abrirCaja(vehiculo: Vehiculo){
+        val listaCajas = listOf(CajaSorpresa.Sumar10(), CajaSorpresa.Teletransporte(), CajaSorpresa.RetrasarTodos(), CajaSorpresa.VehiculoAlInicio(), CajaSorpresa.CasillaDeSalida(), CajaSorpresa.Restar5(), CajaSorpresa.Vacia1(), CajaSorpresa.Vacia2(), CajaSorpresa.Vacia3(), CajaSorpresa.Vacia4())
+        //val numAleatorio = (0..9).random()
+        listaCajas[(0..9).random()].accionAplicada(vehiculo)
+    }
+
+
     /**
      * Inicia la carrera, estableciendo estadoCarrera a true y comenzando el ciclo de iteraciones donde los vehiculos avanzan y realizan acciones.
      */
@@ -25,6 +37,7 @@ class Carrera (val nombreCarrera: String, private val distanciaTotal: Float, pri
 
         while (estadoCarrera) {
             val vehiculoRandom = participantes.random()
+            abrirCaja(vehiculoRandom)
             avanzarVehiculo(vehiculoRandom)
             determinarGanador()
         }

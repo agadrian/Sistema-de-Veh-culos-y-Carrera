@@ -30,8 +30,8 @@ class Carrera (val nombreCarrera: String, private val distanciaTotal: Float, pri
 
         when (caja) {
             is CajaSorpresa.Sumar10 -> sumarAutonomia(vehiculo)
-            is CajaSorpresa.Teletransporte -> teletransportar()
-            is CajaSorpresa.RetrasarTodos -> retrasarTodos()
+            is CajaSorpresa.Teletransporte -> teletransportar(vehiculo)
+            is CajaSorpresa.RetrasarTodos -> retrasarTodos(vehiculo)
             is CajaSorpresa.VehiculoAlInicio -> retrasarVehiculoAlInicio()
             is CajaSorpresa.CasillaDeSalida -> retrasarVehiculoAlInicio() // Mismo comportamiento que VehiculoAlInicio
             is CajaSorpresa.Restar5 -> restarAutonomia(vehiculo)
@@ -44,18 +44,74 @@ class Carrera (val nombreCarrera: String, private val distanciaTotal: Float, pri
 
     }
 
-    fun sumarAutonomia(vehiculo: Vehiculo){
+    /**
+     * Premio que suma 10km por litro para el siguiente avance en nuestro vehículo.
+     */
+    private fun sumarAutonomia(vehiculo: Vehiculo){
         vehiculo.sumarAutonomia()
+        añadirAccion(vehiculo.nombre, "Se ha sumado 10km de autonomia.")
     }
 
-    fun teletransportar(){}
+    /**
+     * Premio que nos teletransporta 100km más adelante en la carrera (sin superar la distancia total de la carrera).
+     * Si tiene combustible avanza 100km, o lo que le quede para meta.
+     */
+    private fun teletransportar(vehiculo: Vehiculo){
+        val posicionFinal = vehiculo.kilometrosActuales+100
+        val autonomia = vehiculo.calcularAutonomia()
 
-    fun retrasarTodos(){}
+        if (autonomia > 100f) {
+            if (posicionFinal < distanciaTotal){ // Si le queda mas de 100km
+                vehiculo.kilometrosActuales = posicionFinal
+                vehiculo.restarCombustible(100f)
+                añadirAccion(vehiculo.nombre, "Se ha teletransportado 100km mas adelante")
+            }
+            else { // Si le quead menos de 100km
+                vehiculo.restarCombustible((distanciaTotal - vehiculo.kilometrosActuales))
+                vehiculo.kilometrosActuales = distanciaTotal
+                añadirAccion(vehiculo.nombre, "Se ha teletransportado a la meta")
+            }
+        }else{
+            añadirAccion(vehiculo.nombre, "No se ha podido teletransportar. Autonomia insuficiente")
+        }
+    }
 
-    fun retrasarVehiculoAlInicio(){}
+    /**
+     * Retrasar al resto de vehículos 100km (tope mínimo km 0). Si llevan mas de 100km se los resta, si no los pone a 0.
+     */
+    private fun retrasarTodos(vehiculoActual: Vehiculo){
+        for (veh in participantes){
+            if (veh != vehiculoActual){
+                if (veh.kilometrosActuales >= 100f){
+                    veh.kilometrosActuales -= 100f
+                    añadirAccion(veh.nombre, "Se ha retrasado 100km a ${veh.nombre}")
+                }
+                else{
+                    veh.kilometrosActuales = 0f
+                    añadirAccion(veh.nombre, "Se devuelto al KKM 0 a ${veh.nombre}")
+                }
+            }
+        }
+    }
 
-    fun restarAutonomia(vehiculo: Vehiculo){
+    /**
+     * Retrasar un vehículo al azar al inicio (km 0)... puede ser el mismo vehículo al que le ha tocado la caja.
+     * CasillaDeSalida: Retrasar nuestro vehículo al inicio (km 0).
+     */
+    fun retrasarVehiculoAlInicio(){
+        val randomVeh = participantes.random()
+        randomVeh.kilometrosActuales = 0f
+        añadirAccion(randomVeh.nombre, "Se ha devuelto al inicio (KM 0)")
+    }
+
+
+    /**
+     * Penalización que resta 5km por litro para el siguiente avance en nuestro vehículo.
+     *
+     */
+    private fun restarAutonomia(vehiculo: Vehiculo){
         vehiculo.restarAutonomia()
+        añadirAccion(vehiculo.nombre, "Se ha restado 5km de autonomia.")
     }
 
 

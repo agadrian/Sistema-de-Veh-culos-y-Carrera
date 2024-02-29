@@ -23,9 +23,39 @@ class Carrera (val nombreCarrera: String, private val distanciaTotal: Float, pri
      * @param vehiculo El vehículo al que se aplicará la acción de la caja sorpresa.
      */
     private fun abrirCaja(vehiculo: Vehiculo){
-        val listaCajas = listOf(CajaSorpresa.Sumar10(), CajaSorpresa.Teletransporte(), CajaSorpresa.RetrasarTodos(), CajaSorpresa.VehiculoAlInicio(), CajaSorpresa.CasillaDeSalida(), CajaSorpresa.Restar5(), CajaSorpresa.Vacia1(), CajaSorpresa.Vacia2(), CajaSorpresa.Vacia3(), CajaSorpresa.Vacia4())
-        //val numAleatorio = (0..9).random()
-        listaCajas[(0..9).random()].accionAplicada(vehiculo)
+        val listaCajas = listOf(CajaSorpresa.Sumar10, CajaSorpresa.Teletransporte, CajaSorpresa.RetrasarTodos, CajaSorpresa.VehiculoAlInicio, CajaSorpresa.CasillaDeSalida, CajaSorpresa.Restar5, CajaSorpresa.Vacia1, CajaSorpresa.Vacia2, CajaSorpresa.Vacia3, CajaSorpresa.Vacia4)
+
+        val caja = listaCajas[(0..9).random()]
+
+
+        when (caja) {
+            is CajaSorpresa.Sumar10 -> sumarAutonomia(vehiculo)
+            is CajaSorpresa.Teletransporte -> teletransportar()
+            is CajaSorpresa.RetrasarTodos -> retrasarTodos()
+            is CajaSorpresa.VehiculoAlInicio -> retrasarVehiculoAlInicio()
+            is CajaSorpresa.CasillaDeSalida -> retrasarVehiculoAlInicio() // Mismo comportamiento que VehiculoAlInicio
+            is CajaSorpresa.Restar5 -> restarAutonomia(vehiculo)
+            is CajaSorpresa.Vacia1 -> {}
+            is CajaSorpresa.Vacia2 -> {}
+            is CajaSorpresa.Vacia3 -> {}
+            is CajaSorpresa.Vacia4 -> {}
+        }
+
+
+    }
+
+    fun sumarAutonomia(vehiculo: Vehiculo){
+        vehiculo.sumarAutonomia()
+    }
+
+    fun teletransportar(){}
+
+    fun retrasarTodos(){}
+
+    fun retrasarVehiculoAlInicio(){}
+
+    fun restarAutonomia(vehiculo: Vehiculo){
+        vehiculo.restarAutonomia()
     }
 
 
@@ -40,6 +70,7 @@ class Carrera (val nombreCarrera: String, private val distanciaTotal: Float, pri
             abrirCaja(vehiculoRandom)
             avanzarVehiculo(vehiculoRandom)
             determinarGanador()
+            vehiculoRandom.autonomiaTemporal = 0f
         }
     }
 

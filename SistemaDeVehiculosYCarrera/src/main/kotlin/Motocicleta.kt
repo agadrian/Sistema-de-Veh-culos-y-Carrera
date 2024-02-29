@@ -28,7 +28,7 @@ class Motocicleta(nombre: String, marca: String, modelo: String, capacidadCombus
      * @return La eficiencia de combustible en km/l.
      */
     override fun calcularKmL():Float{
-        return if (cilindrada == 1000) KM_LITRO_BASE_MOTO else KM_LITRO_BASE_MOTO - (cilindrada.toFloat() / 1000f)
+        return if (cilindrada == 1000) KM_LITRO_BASE_MOTO + autonomiaTemporal else (KM_LITRO_BASE_MOTO - (cilindrada.toFloat() / 1000f)+ autonomiaTemporal)
     }
 
 
@@ -67,6 +67,16 @@ class Motocicleta(nombre: String, marca: String, modelo: String, capacidadCombus
      */
     override fun toString(): String {
         return super.toString() + " ; Cilindrada: $cilindrada "
+    }
+
+    override var autonomiaTemporal: Float = 0f
+
+    override fun sumarAutonomia() {
+        autonomiaTemporal = 10f
+    }
+
+    override fun restarAutonomia() {
+        autonomiaTemporal = -5f
     }
 
 }

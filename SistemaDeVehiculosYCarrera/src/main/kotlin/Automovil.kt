@@ -10,7 +10,7 @@
  * @param combustibleActual La cantidad actual de combustible en el tanque del automovil en litros.
  * @param kilometrosActuales El total de kilometros recorridos por el automovil.
  */
-class Automovil(nombre: String, marca: String, modelo: String, capacidadCombustible: Float, combustibleActual: Float, kilometrosActuales: Float, private val esHibrido: Boolean, condicionBritanica: Boolean = false) : Vehiculo(nombre, marca, modelo, capacidadCombustible, combustibleActual, kilometrosActuales) {
+class Automovil(nombre: String, marca: String, modelo: String, capacidadCombustible: Float, combustibleActual: Float, kilometrosActuales: Float, val esHibrido: Boolean, condicionBritanica: Boolean = false) : Vehiculo(nombre, marca, modelo, capacidadCombustible, combustibleActual, kilometrosActuales) {
 
 
     companion object {
@@ -26,12 +26,14 @@ class Automovil(nombre: String, marca: String, modelo: String, capacidadCombusti
     }
 
 
+
+
     /**
      * Calcula la cantidad de kilometros que el automovil puede recorrer por litro de combustible, dependiendo de si es hibrido o no.
      * @return La cantidad de kilometros por litro del automovil.
      */
     override fun calcularKmL(): Float {
-        return if (esHibrido) KM_LITRO_HIBRIDO else KM_POR_LITRO
+        return if (esHibrido) (KM_LITRO_HIBRIDO + autonomiaTemporal) else (KM_POR_LITRO + autonomiaTemporal)
     }
 
 
@@ -71,4 +73,13 @@ class Automovil(nombre: String, marca: String, modelo: String, capacidadCombusti
         return super.toString() + " ; EsElectrico: $esHibrido ; CondicionBritanica: $condicionBritanica"
     }
 
+    override var autonomiaTemporal: Float = 0f
+
+    override fun sumarAutonomia() {
+        autonomiaTemporal = 10f
+    }
+
+    override fun restarAutonomia() {
+        autonomiaTemporal = -5f
+    }
 }

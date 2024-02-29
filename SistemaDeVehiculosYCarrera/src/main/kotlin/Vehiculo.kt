@@ -118,4 +118,11 @@ abstract class Vehiculo (nombre:String, private val marca: String, private val m
         return "Marca: $marca ; Modelo: $modelo ; CapacidadCombustible: $capacidadCombustible ; CombustibleActual: ${combustibleActual.redondear(2)} ; KmActuales: ${kilometrosActuales.redondear(2)} ; Autonomia: ${calcularAutonomia()}"
     }
 
+
+    abstract var autonomiaTemporal: Float
+
+    abstract fun sumarAutonomia()
+    abstract fun restarAutonomia()
+
+
 }
